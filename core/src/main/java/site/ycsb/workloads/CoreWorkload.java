@@ -79,6 +79,18 @@ public class CoreWorkload extends Workload {
   protected String table;
 
   /**
+   * The name of the database table to run new queries against.
+   */
+  public static final String TABLENAME_NEW_PROPERTY = "table2";
+
+  /**
+   * The default name of the database table to run new queries against.
+   */
+  public static final String TABLENAME_NEW_PROPERTY_DEFAULT = "usertable2";
+
+  protected String table2;
+
+  /**
    * The name of the property for the number of fields in a record.
    */
   public static final String FIELD_COUNT_PROPERTY = "fieldcount";
