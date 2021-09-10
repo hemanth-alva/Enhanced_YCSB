@@ -433,6 +433,7 @@ public class CoreWorkload extends Workload {
   @Override
   public void init(Properties p) throws WorkloadException {
     table = p.getProperty(TABLENAME_PROPERTY, TABLENAME_PROPERTY_DEFAULT);
+    table2 = p.getProperty(TABLENAME_NEW_PROPERTY, TABLENAME_NEW_PROPERTY_DEFAULT);
 
     fieldcount =
         Long.parseLong(p.getProperty(FIELD_COUNT_PROPERTY, FIELD_COUNT_PROPERTY_DEFAULT));
@@ -628,9 +629,11 @@ public class CoreWorkload extends Workload {
     HashMap<String, ByteIterator> values = buildValues(dbkey);
 
     Status status;
+    Status status2;
     int numOfRetries = 0;
     do {
       status = db.insert(table, dbkey, values);
+      status2 = db.insert(table2, dbkey, values);
       if (null != status && status.isOk()) {
         break;
       }
@@ -855,6 +858,7 @@ public class CoreWorkload extends Workload {
 
       HashMap<String, ByteIterator> values = buildValues(dbkey);
       db.insert(table, dbkey, values);
+      db.insert(table2, dbkey, values);
     } finally {
       transactioninsertkeysequence.acknowledge(keynum);
     }
