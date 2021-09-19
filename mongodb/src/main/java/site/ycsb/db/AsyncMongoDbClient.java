@@ -43,13 +43,18 @@ import site.ycsb.DB;
 import site.ycsb.DBException;
 import site.ycsb.Status;
 
+
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
 import java.util.Vector;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.Random;
+import java.util.ArrayList;
+//import java.util.*;
 
 /**
  * MongoDB asynchronous client for YCSB framework using the <a
@@ -108,10 +113,18 @@ public class AsyncMongoDbClient extends DB {
   /** The number of writes in the batchedWrite. */
   private int batchedWriteCount = 0;
 
+  /** Sum variable*/
+  protected static HashMap<String, ArrayList<Integer>> sum_var = new HashMap<String, ArrayList<Integer>>();
+
+  //private static String tabledb = "usertable";
+ 
+
   /**
    * Cleanup any state for this DB. Called once per DB instance; there is one DB
    * instance per client thread.
    */
+
+
   @Override
   public final void cleanup() throws DBException {
     if (INIT_COUNT.decrementAndGet() == 0) {
@@ -223,7 +236,26 @@ public class AsyncMongoDbClient extends DB {
         writeConcern = config.getDefaultDurability();
 
         database = mongoClient.getDatabase(databaseName);
-
+	final String name = "Aggregate";
+	MongoCollection agg=database.getCollection(name);
+	for(int i=0; i<10; i++){
+		final DocumentBuilder key= DOCUMENT_BUILDER.get().reset().add("_id",i);
+		final Document query = key.build();
+		for(int j=0;j<5;j++){
+			String help="field"+Integer.toString(j);
+			Random rand=new Random();
+			//NumericByteIterator s = new NumericByteIterator(rand.nextLong());
+			//StringByteIterator s = new StringByteIterator("hello");
+			int num = rand.nextInt();
+			key.add(help,num);
+			sum_var.computeIfAbsent(help, k -> new ArrayList<>()).add(num);
+			}
+		agg.insert(writeConcern, key);
+	}
+	HashSet<String> hex =new HashSet<String>();
+	hex.add("field0");
+	int n = sum(name, 0, hex, new Vector<HashMap<String, ByteIterator>>());
+	System.out.println("\n Sum: "+ Integer.toString(n)+ "\n");
         System.out.println("mongo connection created with " + url);
       } catch (final Exception e1) {
         System.err
@@ -312,6 +344,20 @@ public class AsyncMongoDbClient extends DB {
       return Status.ERROR;
     }
   }
+
+
+  /* Sum Function*/
+  public static int sum( final String table, final int key, final HashSet<String> hex, final Vector<HashMap<String, ByteIterator>> result) {
+	int sum = 0;
+	String element = hex.toArray(new String[1])[0];
+	for (int x: sum_var.get(element))
+	{
+		sum = sum+x;
+	}
+	return sum;
+	
+}
+
 
   /**
    * Read a record from the database. Each field/value pair from the result will
