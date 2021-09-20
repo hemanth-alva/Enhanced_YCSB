@@ -1,0 +1,27 @@
+436681385
+Number of rows in this table: 100
+mongo connection created with mongodb://localhost:27017/ycsb?w=1
+[OVERALL], RunTime(ms), 1705
+[OVERALL], Throughput(ops/sec), 586.5102639296188
+[TOTAL_GCS_PS_Scavenge], Count, 1
+[TOTAL_GC_TIME_PS_Scavenge], Time(ms), 4
+[TOTAL_GC_TIME_%_PS_Scavenge], Time(%), 0.23460410557184752
+[TOTAL_GCS_PS_MarkSweep], Count, 0
+[TOTAL_GC_TIME_PS_MarkSweep], Time(ms), 0
+[TOTAL_GC_TIME_%_PS_MarkSweep], Time(%), 0.0
+[TOTAL_GCs], Count, 1
+[TOTAL_GC_TIME], Time(ms), 4
+[TOTAL_GC_TIME_%], Time(%), 0.23460410557184752
+[CLEANUP], Operations, 1
+[CLEANUP], AverageLatency(us), 3387.0
+[CLEANUP], MinLatency(us), 3386
+[CLEANUP], MaxLatency(us), 3387
+[CLEANUP], 95thPercentileLatency(us), 3387
+[CLEANUP], 99thPercentileLatency(us), 3387
+[INSERT], Operations, 2000
+[INSERT], AverageLatency(us), 479.1795
+[INSERT], MinLatency(us), 128
+[INSERT], MaxLatency(us), 48799
+[INSERT], 95thPercentileLatency(us), 1214
+[INSERT], 99thPercentileLatency(us), 3657
+[INSERT], Return=OK, 2000
