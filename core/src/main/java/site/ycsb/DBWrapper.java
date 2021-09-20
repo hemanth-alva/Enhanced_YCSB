@@ -187,6 +187,29 @@ public class DBWrapper extends DB {
         (int) ((endTimeNanos - intendedStartTimeNanos) / 1000));
   }
 
+
+  @Override
+  public Status sum(){
+     long ist = measurements.getIntendedStartTimeNs();
+      long st = System.nanoTime();
+      Status res=db.sum();
+     long en = System.nanoTime();
+     measure("SUM",res,ist,st,en);
+     measurements.reportStatus("SUM",res);
+     return res;
+}
+
+@Override
+  public Status count(){
+     long ist = measurements.getIntendedStartTimeNs();
+      long st = System.nanoTime();
+      Status res=db.count();
+     long en = System.nanoTime();
+     measure("COUNT",res,ist,st,en);
+     measurements.reportStatus("COUNT",res);
+     return res;
+}
+ 
   /**
    * Update a record in the database. Any field/value pairs in the specified values HashMap will be written into the
    * record with the specified record key, overwriting any existing values with the same field name.

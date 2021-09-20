@@ -352,6 +352,12 @@ public class CoreWorkload extends Workload {
   public static final String INSERTION_RETRY_LIMIT = "core_workload_insertion_retry_limit";
   public static final String INSERTION_RETRY_LIMIT_DEFAULT = "0";
 
+ public static final String SUM_PROPORTION_PROPERTY="sumproportion";
+public static final String SUM_PROPORTION_PROPERTY_DEFAULT="0.5";
+
+public static final String COUNT_PROPORTION_PROPERTY="countproportion";
+public static final String COUNT_PROPORTION_PROPERTY_DEFAULT="0.8";
+
   /**
    * On average, how long to wait between the retries, in seconds.
    */
@@ -687,6 +693,12 @@ public class CoreWorkload extends Workload {
     case "SCAN":
       doTransactionScan(db);
       break;
+    case "SUM":
+      doTransactionSum(db);
+      break;
+    case "COUNT":
+      doTransactionCount(db);
+      break;
     default:
       doTransactionReadModifyWrite(db);
     }
@@ -864,6 +876,18 @@ public class CoreWorkload extends Workload {
     }
   }
 
+	//SUM
+	
+	public void doTransactionSum(DB db){
+		db.sum();
+		//System.out.println("Sum called");
+	}
+
+	public void doTransactionCount(DB db){
+		db.count();
+	}
+	
+
   /**
    * Creates a weighted discrete values with database operations for a workload to perform.
    * Weights/proportions are read from the properties list and defaults are used
@@ -888,6 +912,8 @@ public class CoreWorkload extends Workload {
         p.getProperty(SCAN_PROPORTION_PROPERTY, SCAN_PROPORTION_PROPERTY_DEFAULT));
     final double readmodifywriteproportion = Double.parseDouble(p.getProperty(
         READMODIFYWRITE_PROPORTION_PROPERTY, READMODIFYWRITE_PROPORTION_PROPERTY_DEFAULT));
+    final double sumproportion=Double.parseDouble(p.getProperty(SUM_PROPORTION_PROPERTY,SUM_PROPORTION_PROPERTY_DEFAULT));
+    final double countproportion=Double.parseDouble(p.getProperty(COUNT_PROPORTION_PROPERTY,COUNT_PROPORTION_PROPERTY_DEFAULT));
 
     final DiscreteGenerator operationchooser = new DiscreteGenerator();
     if (readproportion > 0) {
@@ -909,6 +935,13 @@ public class CoreWorkload extends Workload {
     if (readmodifywriteproportion > 0) {
       operationchooser.addValue(readmodifywriteproportion, "READMODIFYWRITE");
     }
-    return operationchooser;
+    
+    if(sumproportion>0){
+      operationchooser.addValue(sumproportion,"SUM");
+  }
+    if(countproportion>0){
+      operationchooser.addValue(countproportion,"COUNT");
+}
+ return operationchooser;
   }
 }

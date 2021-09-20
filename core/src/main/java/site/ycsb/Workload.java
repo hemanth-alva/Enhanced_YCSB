@@ -49,7 +49,9 @@ public abstract class Workload {
     UPDATE,
     INSERT,
     SCAN,
-    DELETE
+    DELETE,
+    SUM,
+    COUNT
   }
   
   /**

@@ -238,7 +238,7 @@ public class AsyncMongoDbClient extends DB {
         database = mongoClient.getDatabase(databaseName);
 	final String name = "Aggregate";
 	MongoCollection agg=database.getCollection(name);
-	for(int i=0; i<10; i++){
+	for(int i=0; i<100; i++){
 		final DocumentBuilder key= DOCUMENT_BUILDER.get().reset().add("_id",i);
 		final Document query = key.build();
 		for(int j=0;j<5;j++){
@@ -254,8 +254,9 @@ public class AsyncMongoDbClient extends DB {
 	}
 	HashSet<String> hex =new HashSet<String>();
 	hex.add("field0");
-	int n = sum(name, 0, hex, new Vector<HashMap<String, ByteIterator>>());
-	System.out.println("\n Sum: "+ Integer.toString(n)+ "\n");
+	sum(name, 0, hex, new Vector<HashMap<String, ByteIterator>>());
+	count(name);
+	//System.out.println("\n Sum: "+ Integer.toString(n)+ "\n");
         System.out.println("mongo connection created with " + url);
       } catch (final Exception e1) {
         System.err
@@ -347,15 +348,23 @@ public class AsyncMongoDbClient extends DB {
 
 
   /* Sum Function*/
-  public static int sum( final String table, final int key, final HashSet<String> hex, final Vector<HashMap<String, ByteIterator>> result) {
+  public final Status sum( final String table, final int key, final HashSet<String> hex, final Vector<HashMap<String, ByteIterator>> result) {
 	int sum = 0;
 	String element = hex.toArray(new String[1])[0];
 	for (int x: sum_var.get(element))
 	{
 		sum = sum+x;
 	}
-	return sum;
-	
+	//return sum;
+	System.out.println(sum);
+	return Status.OK;
+}
+
+/*Count Function*/
+	public final Status count(final String table){
+	   final MongoCollection collection = database.getCollection(table);
+           System.out.println("Number of rows in this table: "+collection.count());
+	   return Status.OK;
 }
 
 
