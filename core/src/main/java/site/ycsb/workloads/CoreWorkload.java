@@ -374,6 +374,9 @@ public static final String COUNT_PROPORTION_PROPERTY_DEFAULT="0.8";
    */
   public static final String FIELD_NAME_PREFIX_DEFAULT = "field";
 
+  /* primary key */
+  public static HashSet<String> prim = new HashSet<String>();
+
   protected NumberGenerator keysequence;
   protected DiscreteGenerator operationchooser;
   protected NumberGenerator keychooser;
@@ -633,7 +636,8 @@ public static final String COUNT_PROPORTION_PROPERTY_DEFAULT="0.8";
     int keynum = keysequence.nextValue().intValue();
     String dbkey = CoreWorkload.buildKeyName(keynum, zeropadding, orderedinserts);
     HashMap<String, ByteIterator> values = buildValues(dbkey);
-
+    prim.add(dbkey);
+    //System.out.println(prim);
     Status status;
     Status status2;
     int numOfRetries = 0;
@@ -666,7 +670,6 @@ public static final String COUNT_PROPORTION_PROPERTY_DEFAULT="0.8";
 
     return null != status && status.isOk();
   }
-
   /**
    * Do one transaction operation. Because it will be called concurrently from multiple client
    * threads, this function must be thread safe. However, avoid synchronized, or the threads will block waiting
@@ -689,6 +692,7 @@ public static final String COUNT_PROPORTION_PROPERTY_DEFAULT="0.8";
       break;
     case "INSERT":
       doTransactionInsert(db);
+      
       break;
     case "SCAN":
       doTransactionScan(db);

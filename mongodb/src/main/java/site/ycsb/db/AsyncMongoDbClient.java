@@ -54,6 +54,8 @@ import java.util.Vector;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.Random;
 import java.util.ArrayList;
+import java.io.*;
+import java.lang.Thread;
 //import java.util.*;
 
 /**
@@ -238,7 +240,7 @@ public class AsyncMongoDbClient extends DB {
         database = mongoClient.getDatabase(databaseName);
 	final String name = "Aggregate";
 	MongoCollection agg=database.getCollection(name);
-	for(int i=0; i<100; i++){
+	for(int i=0; i<500; i++){
 		final DocumentBuilder key= DOCUMENT_BUILDER.get().reset().add("_id",i);
 		final Document query = key.build();
 		for(int j=0;j<5;j++){
@@ -356,8 +358,21 @@ public class AsyncMongoDbClient extends DB {
 		sum = sum+x;
 	}
 	//return sum;
+	wait(2000);
 	System.out.println(sum);
 	return Status.OK;
+}
+
+/*wait*/
+
+public static void wait(int ms){
+	try{
+		Thread.sleep(ms);
+	}
+	catch(InterruptedException ex){
+		//Thread.currentThread().interrupt();
+		System.out.println("no sleep");
+	}
 }
 
 /*Count Function*/
@@ -366,7 +381,35 @@ public class AsyncMongoDbClient extends DB {
            System.out.println("Number of rows in this table: "+collection.count());
 	   return Status.OK;
 }
+/*Main sum Fuction*/
+/*
+public final Status Sum( final String table, final int key, final Set<String> fields, final Vector<HashMap<String,NumericByteIterator>> result) {
+	final MongoCollection collection=database.getCollection(table);
+	final Find.builder find = Find.builder().query(where(“_id”).greaterThanOrEqualTo(key)).readPreference(readPreference);
 
+If (fields !=null) {
+	final DocumentBuilder fieldsDoc= BuilderFactory.start();
+	for (final String  field : fields){
+		fieldsDoc.add(field, INCLUDE);
+}
+find.projection(fieldsDoc);
+}
+
+final MongoIterator<Document> cursor = collection.find(find);
+while(cursor.hasNext()){
+	final Document doc = cursor.next();
+	final HashMap<String, NumericByteIterator> docAsMap = new HashMap<String, NumericByteIteratot>();
+	fillMap(docAsMap, doc)
+	result.add(docAsMap);
+}
+
+int k=0;
+for( int i=0; i<result.size(); i++){
+k+=(docAsMap.get(“field0”)).getLong();
+}
+return k;
+}
+*/
 
   /**
    * Read a record from the database. Each field/value pair from the result will
