@@ -243,7 +243,14 @@ public class BasicDB extends DB {
       sb.append("INSERT ").append(table).append(" ").append(key).append(" [ ");
       if (values != null) {
         for (Map.Entry<String, ByteIterator> entry : values.entrySet()) {
-          sb.append(entry.getKey()).append("=").append(entry.getValue()).append(" ");
+	  if (table=="usertable2")
+		{
+			sb.append(entry.getKey()).append("11").append("=").append(entry.getValue()).append(" ");
+		}
+	  else
+		{
+          	sb.append(entry.getKey()).append("=").append(entry.getValue()).append(" ");
+		}
         }
       }
 

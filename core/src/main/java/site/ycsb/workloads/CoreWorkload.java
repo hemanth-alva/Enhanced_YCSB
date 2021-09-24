@@ -101,6 +101,7 @@ public class CoreWorkload extends Workload {
   public static final String FIELD_COUNT_PROPERTY_DEFAULT = "10";
   
   private List<String> fieldnames;
+  private List<String> fieldnames2;
 
   /**
    * The name of the property for the field length distribution. Options are "uniform", "zipfian"
@@ -448,8 +449,12 @@ public static final String COUNT_PROPORTION_PROPERTY_DEFAULT="0.8";
         Long.parseLong(p.getProperty(FIELD_COUNT_PROPERTY, FIELD_COUNT_PROPERTY_DEFAULT));
     final String fieldnameprefix = p.getProperty(FIELD_NAME_PREFIX, FIELD_NAME_PREFIX_DEFAULT);
     fieldnames = new ArrayList<>();
+    fieldnames2 = new ArrayList<>();
     for (int i = 0; i < fieldcount; i++) {
       fieldnames.add(fieldnameprefix + i);
+    }
+    for (int i = 0; i < fieldcount; i++) {
+      fieldnames2.add(fieldnameprefix+ "11" + i);
     }
     fieldlengthgenerator = CoreWorkload.getFieldLengthGenerator(p);
 
@@ -607,6 +612,22 @@ public static final String COUNT_PROPORTION_PROPERTY_DEFAULT="0.8";
     return values;
   }
 
+  private HashMap<String, ByteIterator> buildValues2(String key) {
+    HashMap<String, ByteIterator> values = new HashMap<>();
+
+    for (String fieldkey : fieldnames2) {
+      ByteIterator data;
+      if (dataintegrity) {
+        data = new StringByteIterator(buildDeterministicValue(key, fieldkey));
+      } else {
+        // fill with random data
+        data = new RandomByteIterator(fieldlengthgenerator.nextValue().longValue());
+      }
+      values.put(fieldkey, data);
+    }
+    return values;
+  }
+
   /**
    * Build a deterministic value given the key information.
    */
@@ -636,6 +657,7 @@ public static final String COUNT_PROPORTION_PROPERTY_DEFAULT="0.8";
     int keynum = keysequence.nextValue().intValue();
     String dbkey = CoreWorkload.buildKeyName(keynum, zeropadding, orderedinserts);
     HashMap<String, ByteIterator> values = buildValues(dbkey);
+    HashMap<String, ByteIterator> values2 = buildValues2(dbkey);
     prim.add(dbkey);
     //System.out.println(prim);
     Status status;
@@ -643,7 +665,7 @@ public static final String COUNT_PROPORTION_PROPERTY_DEFAULT="0.8";
     int numOfRetries = 0;
     do {
       status = db.insert(table, dbkey, values);
-      status2 = db.insert(table2, dbkey, values);
+      status2 = db.insert(table2, dbkey, values2);
       if (null != status && status.isOk()) {
         break;
       }

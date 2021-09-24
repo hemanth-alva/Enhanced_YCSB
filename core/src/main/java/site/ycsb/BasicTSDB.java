@@ -183,15 +183,38 @@ public class BasicTSDB extends BasicDB {
         final TreeMap<String, ByteIterator> tree = new TreeMap<String, ByteIterator>(values);
         for (Map.Entry<String, ByteIterator> entry : tree.entrySet()) {
           if (entry.getKey().equals(timestampKey)) {
-            sb.append(entry.getKey()).append("=")
-              .append(Utils.bytesToLong(entry.getValue().toArray())).append(" ");
+	    if (table=="usertable2")
+		{
+			sb.append(entry.getKey()).append("11").append("=").append(Utils.bytesToLong(entry.getValue().toArray())).append(" ");
+		}
+	    else
+		{
+          	sb.append(entry.getKey()).append("=").append(Utils.bytesToLong(entry.getValue().toArray())).append(" ");
+		}
+            
           } else if (entry.getKey().equals(valueKey)) {
             final NumericByteIterator it = (NumericByteIterator) entry.getValue();
             isFloat = it.isFloatingPoint();
+	    if (table=="usertable2")
+		{
+			sb.append(entry.getKey()).append("11").append(isFloat ? it.getDouble() : it.getLong()).append(" ");
+		}
+	    else
+		{
+          	sb.append(entry.getKey()).append("=").append(isFloat ? it.getDouble() : it.getLong()).append(" ");
+		}
             sb.append(entry.getKey()).append("=")
               .append(isFloat ? it.getDouble() : it.getLong()).append(" ");
           } else {
-            sb.append(entry.getKey()).append("=").append(entry.getValue()).append(" ");
+	    
+	    if (table=="usertable2")
+		{
+			sb.append(entry.getKey()).append("11").append(entry.getValue()).append(" ");
+		}
+	    else
+		{
+          	sb.append(entry.getKey()).append("=").append(entry.getValue()).append(" ");
+		}
           }
         }
       }
