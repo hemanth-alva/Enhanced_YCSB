@@ -40,6 +40,7 @@ site/ycsb/generator/HistogramGenerator.class
 site/ycsb/generator/SequentialGenerator.class
 site/ycsb/generator/DiscreteGenerator.class
 site/ycsb/measurements/Measurements$1.class
+site/ycsb/workloads/CoreWorkload$1.class
 site/ycsb/generator/Generator.class
 site/ycsb/ByteIterator.class
 site/ycsb/generator/UnixEpochTimestampGenerator$1.class

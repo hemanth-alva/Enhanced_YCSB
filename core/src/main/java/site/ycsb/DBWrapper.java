@@ -209,6 +209,17 @@ public class DBWrapper extends DB {
      measurements.reportStatus("COUNT",res);
      return res;
 }
+
+@Override
+  public Status join(String table1, String table2){
+     long ist = measurements.getIntendedStartTimeNs();
+      long st = System.nanoTime();
+      Status res=db.join(table1, table2);
+     long en = System.nanoTime();
+     measure("Join",res,ist,st,en);
+     measurements.reportStatus("Join",res);
+     return res;
+}
  
   /**
    * Update a record in the database. Any field/value pairs in the specified values HashMap will be written into the
@@ -273,4 +284,10 @@ public class DBWrapper extends DB {
       return res;
     }
   }
+  	/**
+	*table
+	*
+	*/	
+	//public abstract HashMap tb(String table);
+
 }

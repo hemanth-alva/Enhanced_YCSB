@@ -132,6 +132,8 @@ public abstract class DB {
    * @return The result of the operation.
    */
   public abstract Status delete(String table, String key);
+
+
  public Status sum()
 {
 return Status.OK;
@@ -141,4 +143,12 @@ public Status count()
 {
 return Status.OK;
 }
+	/**
+	*Join
+	*
+	*/
+  public Status join(String table1, String table2)
+  {
+    return Status.OK;
+  }
 }

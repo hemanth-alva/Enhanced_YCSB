@@ -114,6 +114,8 @@ public class AsyncMongoDbClient extends DB {
 
   /** The number of writes in the batchedWrite. */
   private int batchedWriteCount = 0;
+ //Counter
+  private int Counter = 0;
 
   /** Sum variable*/
   protected static HashMap<String, ArrayList<Integer>> sum_var = new HashMap<String, ArrayList<Integer>>();
@@ -126,6 +128,14 @@ public class AsyncMongoDbClient extends DB {
    * instance per client thread.
    */
 
+  /**
+  *
+  *Table
+  */
+  public static HashMap<String, HashMap> t1 = new HashMap<String, HashMap>();
+  public static HashMap<String, HashMap> t2 = new HashMap<String, HashMap>();
+ //
+ //
 
   @Override
   public final void cleanup() throws DBException {
@@ -292,10 +302,29 @@ public class AsyncMongoDbClient extends DB {
       final DocumentBuilder toInsert =
           DOCUMENT_BUILDER.get().reset().add("_id", key);
       final Document query = toInsert.build();
+	HashMap<String, Object> tor = new HashMap<String, Object>();
       for (final Map.Entry<String, ByteIterator> entry : values.entrySet()) {
         toInsert.add(entry.getKey(), entry.getValue().toArray());
+	//System.out.println(entry.getKey());
+	//System.out.println(entry.getValue().toArray());
+	tor.put(entry.getKey(), entry.getValue().toArray());
       }
-
+	if(table == "usertable")
+	{
+		t1.put(key,tor);	
+	}
+	else
+	{
+		t2.put(key,tor);
+	}
+  	if((Counter<55)&&(Counter%5==1)&&(table=="usertable")){
+	  HashMap<String, HashMap> mpa;
+	  mpa = new HashMap<>(t2);
+	  mpa.forEach((k,v) -> t1.get(k).forEach((kay,value) -> v.put(kay,value)));
+	  System.out.println("\nJoin\n");
+	  System.out.println(mpa);
+	}
+	Counter = Counter+1;
       // Do an upsert.
       if (batchSize <= 1) {
         long result;
@@ -348,6 +377,29 @@ public class AsyncMongoDbClient extends DB {
     }
   }
 
+  /**
+  *
+  *Join operation
+  *
+  */
+  public final Status join(final String table1, final String table2)
+	{
+		try {
+			final MongoCollection collection1 = database.getCollection(table1);
+			final MongoCollection collection2 = database.getCollection(table2);
+			HashMap<String, HashMap> mpa;
+			mpa = new HashMap<>(t2);
+			mpa.forEach((k,v) -> t1.get(k).forEach((kay,value) -> v.put(kay,value)));
+			//System.out.println("\nJoin\n");
+			//System.out.println(t1);
+			wait(10);
+			return Status.OK;
+		}catch (final Exception e) {
+      		e.printStackTrace();
+      		return Status.ERROR;
+    		}
+	}
+
 
   /* Sum Function*/
   public final Status sum( final String table, final int key, final HashSet<String> hex, final Vector<HashMap<String, ByteIterator>> result) {
@@ -358,14 +410,15 @@ public class AsyncMongoDbClient extends DB {
 		sum = sum+x;
 	}
 	//return sum;
-	wait(2000);
+	wait(10);
 	System.out.println(sum);
+	
 	return Status.OK;
 }
 
 /*wait*/
 
-public static void wait(int ms){
+private void wait(int ms){
 	try{
 		Thread.sleep(ms);
 	}
@@ -410,6 +463,7 @@ k+=(docAsMap.get(“field0”)).getLong();
 return k;
 }
 */
+
 
   /**
    * Read a record from the database. Each field/value pair from the result will
@@ -496,7 +550,6 @@ return k;
           Find.builder().query(where("_id").greaterThanOrEqualTo(startkey))
               .limit(recordcount).batchSize(recordcount).sort(Sort.asc("_id"))
               .readPreference(readPreference);
-
       if (fields != null) {
         final DocumentBuilder fieldsDoc = BuilderFactory.start();
         for (final String field : fields) {

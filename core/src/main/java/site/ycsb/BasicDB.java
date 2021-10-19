@@ -57,6 +57,17 @@ public class BasicDB extends DB {
     todelay = 0;
   }
 
+
+  //
+  //
+  //table 
+  //
+  //
+  public static HashMap<String, StringBuilder> t1 = new HashMap<String, StringBuilder>();
+  public static HashMap<String, StringBuilder> t2 = new HashMap<String, StringBuilder>();
+
+
+
   protected void delay() {
     if (todelay > 0) {
       long delayNs;
@@ -240,22 +251,30 @@ public class BasicDB extends DB {
 
     if (verbose) {
       StringBuilder sb = getStringBuilder();
-      sb.append("INSERT ").append(table).append(" ").append(key).append(" [ ");
+      sb.append(table).append(" ").append(key).append(" [ ");
       if (values != null) {
         for (Map.Entry<String, ByteIterator> entry : values.entrySet()) {
-	  if (table=="usertable2")
-		{
-			sb.append(entry.getKey()).append("11").append("=").append(entry.getValue()).append(" ");
-		}
-	  else
-		{
-          	sb.append(entry.getKey()).append("=").append(entry.getValue()).append(" ");
-		}
+	  //if (table=="usertable2")
+		//{
+		//	sb.append(entry.getKey()).append("11").append("=").append(entry.getValue()).append(" ");
+		//}
+	  //else
+		//{
+          sb.append(entry.getKey()).append("=").append(entry.getValue()).append(" ");
+		//}
         }
       }
 
       sb.append("]");
       System.out.println(sb);
+      if (table=="usertable2")
+      {
+      	t2.put(key, sb);
+      }
+      else
+      {
+      	t1.put(key, sb);
+      }
     }
 
     if (count) {
@@ -264,6 +283,21 @@ public class BasicDB extends DB {
     
     return Status.OK;
   }
+
+  /**
+   *Table
+   *
+   
+  public HashMap tb(String table) {
+      if (table=="usertable2")
+      {
+      	return t2;
+      }
+      else
+      {
+      	return t1;
+      }
+  }*/
 
 
   /**
@@ -288,6 +322,15 @@ public class BasicDB extends DB {
     
     return Status.OK;
   }
+  
+  /**
+   * Join operation on 2 Tables
+   *
+   */
+  //public Status join(String table1, String table2) {
+    //delay();
+    //return Status.OK;
+  //}
 
   @Override
   public void cleanup() {

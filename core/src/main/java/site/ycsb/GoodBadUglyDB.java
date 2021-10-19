@@ -158,4 +158,9 @@ public class GoodBadUglyDB extends DB {
     delay();
     return Status.OK;
   }
+  /*
+  public Status join(String table1, String table2) {
+    delay();
+    return Status.OK;
+  }*/
 }

@@ -353,11 +353,21 @@ public class CoreWorkload extends Workload {
   public static final String INSERTION_RETRY_LIMIT = "core_workload_insertion_retry_limit";
   public static final String INSERTION_RETRY_LIMIT_DEFAULT = "0";
 
+  /**
+   * The name of the property for the proportion of transactions that are join.
+   */
+  public static final String JOIN_PROPORTION_PROPERTY = "joinproportion";
+
+  /**
+   * The default proportion of transactions that are join.
+   */
+  public static final String JOIN_PROPORTION_PROPERTY_DEFAULT = "0.0";
+
  public static final String SUM_PROPORTION_PROPERTY="sumproportion";
-public static final String SUM_PROPORTION_PROPERTY_DEFAULT="0.5";
+public static final String SUM_PROPORTION_PROPERTY_DEFAULT="0.0";
 
 public static final String COUNT_PROPORTION_PROPERTY="countproportion";
-public static final String COUNT_PROPORTION_PROPERTY_DEFAULT="0.8";
+public static final String COUNT_PROPORTION_PROPERTY_DEFAULT="0.0";
 
   /**
    * On average, how long to wait between the retries, in seconds.
@@ -405,6 +415,26 @@ public static final String COUNT_PROPORTION_PROPERTY_DEFAULT="0.8";
     }
     return prekey + value;
   }
+
+  //-----------
+  protected static final ThreadLocal<StringBuilder> TL_STRING_BUILDER = new ThreadLocal<StringBuilder>() {
+     @Override
+     protected StringBuilder initialValue() {
+       return new StringBuilder();
+     }
+   };
+
+  protected static StringBuilder getStringBuilder() {
+    StringBuilder sb = TL_STRING_BUILDER.get();
+    sb.setLength(0);
+    return sb;
+  }
+
+  //table frame
+  //public static int count0 = 0;
+  public static HashMap<String, StringBuilder> t1 = new HashMap<String, StringBuilder>();
+  public static HashMap<String, StringBuilder> t2 = new HashMap<String, StringBuilder>();
+  
 
   protected static NumberGenerator getFieldLengthGenerator(Properties p) throws WorkloadException {
     NumberGenerator fieldlengthgenerator;
@@ -657,6 +687,7 @@ public static final String COUNT_PROPORTION_PROPERTY_DEFAULT="0.8";
     int keynum = keysequence.nextValue().intValue();
     String dbkey = CoreWorkload.buildKeyName(keynum, zeropadding, orderedinserts);
     HashMap<String, ByteIterator> values = buildValues(dbkey);
+    //HashMap<String, ByteIterator> value = values;
     HashMap<String, ByteIterator> values2 = buildValues2(dbkey);
     prim.add(dbkey);
     //System.out.println(prim);
@@ -664,7 +695,28 @@ public static final String COUNT_PROPORTION_PROPERTY_DEFAULT="0.8";
     Status status2;
     int numOfRetries = 0;
     do {
+      //StringBuilder sb = getStringBuilder();
+
       status = db.insert(table, dbkey, values);
+      /*sb.append(table).append(" ").append(dbkey).append(" [ ");
+      if (values != null) {
+        for (Map.Entry<String, ByteIterator> entry : values2.entrySet()) {
+          sb.append(entry.getKey()).append("=").append(entry.getValue()).append(" ");
+        }
+      }
+
+      sb.append("]");
+      System.out.println(sb);
+      count0+=1;
+	System.out.println(count0);*/
+
+
+	//t1 = db.tb("usertable");
+	//for (StringBuilder entry: t1.values())
+	//	System.out.println(t1);
+	//	System.out.println("\ntable\n");
+
+
       status2 = db.insert(table2, dbkey, values2);
       if (null != status && status.isOk()) {
         break;
@@ -725,6 +777,9 @@ public static final String COUNT_PROPORTION_PROPERTY_DEFAULT="0.8";
     case "COUNT":
       doTransactionCount(db);
       break;
+    case "JOIN":
+	doTransactionJoin(db);
+	break;
     default:
       doTransactionReadModifyWrite(db);
     }
@@ -895,11 +950,19 @@ public static final String COUNT_PROPORTION_PROPERTY_DEFAULT="0.8";
       String dbkey = CoreWorkload.buildKeyName(keynum, zeropadding, orderedinserts);
 
       HashMap<String, ByteIterator> values = buildValues(dbkey);
+      HashMap<String, ByteIterator> values2 = buildValues2(dbkey);
       db.insert(table, dbkey, values);
-      db.insert(table2, dbkey, values);
+      db.insert(table2, dbkey, values2);
     } finally {
       transactioninsertkeysequence.acknowledge(keynum);
     }
+  }
+
+  /**
+   * Jion do transaction
+   */ 
+  public void doTransactionJoin(DB db){
+    db.join(table,table2);
   }
 
 	//SUM
@@ -907,10 +970,12 @@ public static final String COUNT_PROPORTION_PROPERTY_DEFAULT="0.8";
 	public void doTransactionSum(DB db){
 		db.sum();
 		//System.out.println("Sum called");
+		 
 	}
 
 	public void doTransactionCount(DB db){
 		db.count();
+		
 	}
 	
 
@@ -938,6 +1003,7 @@ public static final String COUNT_PROPORTION_PROPERTY_DEFAULT="0.8";
         p.getProperty(SCAN_PROPORTION_PROPERTY, SCAN_PROPORTION_PROPERTY_DEFAULT));
     final double readmodifywriteproportion = Double.parseDouble(p.getProperty(
         READMODIFYWRITE_PROPORTION_PROPERTY, READMODIFYWRITE_PROPORTION_PROPERTY_DEFAULT));
+    final double joinproportion=Double.parseDouble(p.getProperty(JOIN_PROPORTION_PROPERTY,JOIN_PROPORTION_PROPERTY_DEFAULT));
     final double sumproportion=Double.parseDouble(p.getProperty(SUM_PROPORTION_PROPERTY,SUM_PROPORTION_PROPERTY_DEFAULT));
     final double countproportion=Double.parseDouble(p.getProperty(COUNT_PROPORTION_PROPERTY,COUNT_PROPORTION_PROPERTY_DEFAULT));
 
@@ -962,6 +1028,10 @@ public static final String COUNT_PROPORTION_PROPERTY_DEFAULT="0.8";
       operationchooser.addValue(readmodifywriteproportion, "READMODIFYWRITE");
     }
     
+    if (joinproportion > 0) {
+      operationchooser.addValue(joinproportion,"JOIN");
+    }
+
     if(sumproportion>0){
       operationchooser.addValue(sumproportion,"SUM");
   }
