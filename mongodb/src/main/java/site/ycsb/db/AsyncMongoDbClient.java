@@ -390,9 +390,10 @@ public class AsyncMongoDbClient extends DB {
 			HashMap<String, HashMap> mpa;
 			mpa = new HashMap<>(t2);
 			mpa.forEach((k,v) -> t1.get(k).forEach((kay,value) -> v.put(kay,value)));
-			if ((Counter%5==0)&&(Counter<100)){
-				System.out.println("\nJoin\n");
+			if ((Counter%5==0)&&(Counter==100)){
+				System.out.println("Join\n");
 				System.out.println(mpa);
+				Sytem.out.println("\n");
 			}
 			Counter=Counter+1;
 			wait(10);
