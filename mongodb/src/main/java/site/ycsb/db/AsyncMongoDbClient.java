@@ -316,7 +316,7 @@ public class AsyncMongoDbClient extends DB {
 	else
 	{
 		t2.put(key,tor);
-	}
+	}/*
   	if((Counter<55)&&(Counter%5==1)&&(table=="usertable")){
 	  HashMap<String, HashMap> mpa;
 	  mpa = new HashMap<>(t2);
@@ -324,7 +324,7 @@ public class AsyncMongoDbClient extends DB {
 	  System.out.println("\nJoin\n");
 	  System.out.println(mpa);
 	}
-	Counter = Counter+1;
+	Counter = Counter+1;*/
       // Do an upsert.
       if (batchSize <= 1) {
         long result;
@@ -390,8 +390,11 @@ public class AsyncMongoDbClient extends DB {
 			HashMap<String, HashMap> mpa;
 			mpa = new HashMap<>(t2);
 			mpa.forEach((k,v) -> t1.get(k).forEach((kay,value) -> v.put(kay,value)));
-			//System.out.println("\nJoin\n");
-			//System.out.println(t1);
+			if ((Counter%5==0)&&(Counter<100)){
+				System.out.println("\nJoin\n");
+				System.out.println(mpa);
+			}
+			Counter=Counter+1;
 			wait(10);
 			return Status.OK;
 		}catch (final Exception e) {
