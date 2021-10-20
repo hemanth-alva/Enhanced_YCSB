@@ -7,7 +7,7 @@ readallfields=true
 readproportion=0.5
 updateproportion=0.5
 scanproportion=0
-insertproportion=0
+insertproportion=0.6
 sumproportion=0.5
 countproportion=0.8
 
