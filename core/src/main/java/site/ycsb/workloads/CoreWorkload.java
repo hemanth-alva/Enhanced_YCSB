@@ -959,7 +959,7 @@ public static final String COUNT_PROPORTION_PROPERTY_DEFAULT="0.0";
   }
 
   /**
-   * Jion do transaction
+   * Join do transaction
    */ 
   public void doTransactionJoin(DB db){
     db.join(table,table2);
