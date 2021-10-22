@@ -119,6 +119,9 @@ public class AsyncMongoDbClient extends DB {
 
   /** Sum variable*/
   protected static HashMap<String, ArrayList<Integer>> sum_var = new HashMap<String, ArrayList<Integer>>();
+  private int countx = 0;
+  private int sumx = 0;
+  private long countxx;
 
   //private static String tabledb = "usertable";
  
@@ -250,10 +253,10 @@ public class AsyncMongoDbClient extends DB {
         database = mongoClient.getDatabase(databaseName);
 	final String name = "Aggregate";
 	MongoCollection agg=database.getCollection(name);
-	//int sss = 0;
 	for(int i=0; i<20000; i++){
 		final DocumentBuilder key= DOCUMENT_BUILDER.get().reset().add("_id",i);
 		final Document query = key.build();
+		countx +=1;
 		for(int j=0;j<5;j++){
 			String help="field"+Integer.toString(j);
 			Random rand=new Random();
@@ -262,15 +265,17 @@ public class AsyncMongoDbClient extends DB {
 			int num = rand.nextInt();
 			key.add(help,num);
 			sum_var.computeIfAbsent(help, k -> new ArrayList<>()).add(num);
-			//sss = num+sss;
 			}
 		agg.insert(writeConcern, key);
 	}
-	//System.out.println(sss);
+	System.out.println("Count operation: ");
+	System.out.println(countx);
 	HashSet<String> hex =new HashSet<String>();
 	hex.add("field0");
 	sum(name, 0, hex, new Vector<HashMap<String, ByteIterator>>());
-	count(name);
+	//count(name);
+	System.out.println("Sum operation: ");
+	System.out.println(sumx);
 	//System.out.println("\n Sum: "+ Integer.toString(n)+ "\n");
         System.out.println("mongo connection created with " + url);
       } catch (final Exception e1) {
@@ -418,7 +423,8 @@ public class AsyncMongoDbClient extends DB {
 	}
 	//return sum;
 	wait(10);
-	System.out.println(sum);
+	sumx = sum;
+	//System.out.println(sum);
 	
 	return Status.OK;
 }
@@ -438,7 +444,8 @@ private void wait(int ms){
 /*Count Function*/
 	public final Status count(final String table){
 	   final MongoCollection collection = database.getCollection(table);
-           System.out.println("Number of rows in this table: "+collection.count());
+		countxx = collection.count();
+           //System.out.println("Number of rows in this table: "+collection.count());
 	   return Status.OK;
 }
 /*Main sum Fuction*/
