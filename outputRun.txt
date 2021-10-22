@@ -49,14 +49,14 @@ Join
 [INSERT], 99thPercentileLatency(us), 10783
 [INSERT], Return=OK, 306
 [COUNT], Operations, 216
-[COUNT], AverageLatency(us), 1.9074074074074074
+[COUNT], AverageLatency(us), 1907.4074074074074
 [COUNT], MinLatency(us), 0
 [COUNT], MaxLatency(us), 3855
 [COUNT], 95thPercentileLatency(us), 1200
 [COUNT], 99thPercentileLatency(us), 1353
 [COUNT], Return=OK, 216
 [SUM], Operations, 142
-[SUM], AverageLatency(us), 0.14084507042253522
+[SUM], AverageLatency(us), 1408.4507042253522
 [SUM], MinLatency(us), 0
 [SUM], MaxLatency(us), 3567
 [SUM], 95thPercentileLatency(us), 2483
