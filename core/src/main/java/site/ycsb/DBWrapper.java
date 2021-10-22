@@ -189,10 +189,10 @@ public class DBWrapper extends DB {
 
 
   @Override
-  public Status sum(){
+  public Status sum(String table, int key, HashSet<String> hex, Vector<HashMap<String, ByteIterator>> result){
      long ist = measurements.getIntendedStartTimeNs();
       long st = System.nanoTime();
-      Status res=db.sum();
+      Status res=db.sum(table, key, hex, result);
      long en = System.nanoTime();
      measure("SUM",res,ist,st,en);
      measurements.reportStatus("SUM",res);
@@ -200,10 +200,10 @@ public class DBWrapper extends DB {
 }
 
 @Override
-  public Status count(){
+  public Status count(String table){
      long ist = measurements.getIntendedStartTimeNs();
       long st = System.nanoTime();
-      Status res=db.count();
+      Status res=db.count(table);
      long en = System.nanoTime();
      measure("COUNT",res,ist,st,en);
      measurements.reportStatus("COUNT",res);

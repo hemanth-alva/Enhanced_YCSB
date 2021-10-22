@@ -89,6 +89,12 @@ public class CoreWorkload extends Workload {
   public static final String TABLENAME_NEW_PROPERTY_DEFAULT = "usertable2";
 
   protected String table2;
+  
+  public static final String AGGREGATE = "tableagree";
+  
+  public static final String AGGREGATE_DEFAULT = "Aggregate";
+
+  protected String aggre;
 
   /**
    * The name of the property for the number of fields in a record.
@@ -474,6 +480,7 @@ public static final String COUNT_PROPORTION_PROPERTY_DEFAULT="0.0";
   public void init(Properties p) throws WorkloadException {
     table = p.getProperty(TABLENAME_PROPERTY, TABLENAME_PROPERTY_DEFAULT);
     table2 = p.getProperty(TABLENAME_NEW_PROPERTY, TABLENAME_NEW_PROPERTY_DEFAULT);
+    aggre  = p.getProperty(AGGREGATE, AGGREGATE_DEFAULT);
 
     fieldcount =
         Long.parseLong(p.getProperty(FIELD_COUNT_PROPERTY, FIELD_COUNT_PROPERTY_DEFAULT));
@@ -968,13 +975,15 @@ public static final String COUNT_PROPORTION_PROPERTY_DEFAULT="0.0";
 	//SUM
 	
 	public void doTransactionSum(DB db){
-		db.sum();
+		HashSet<String> hex =new HashSet<String>();
+		hex.add("field0");
+		db.sum(aggre,0,hex, new Vector<HashMap<String, ByteIterator>>());
 		//System.out.println("Sum called");
 		 
 	}
 
 	public void doTransactionCount(DB db){
-		db.count();
+		db.count(aggre);
 		
 	}
 	

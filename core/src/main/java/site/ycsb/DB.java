@@ -18,6 +18,7 @@
 package site.ycsb;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
@@ -134,12 +135,12 @@ public abstract class DB {
   public abstract Status delete(String table, String key);
 
 
- public Status sum()
+ public Status sum(String table, int key, HashSet<String> hex, Vector<HashMap<String, ByteIterator>> result)
 {
 return Status.OK;
 }
 
-public Status count()
+public Status count(String table)
 {
 return Status.OK;
 }

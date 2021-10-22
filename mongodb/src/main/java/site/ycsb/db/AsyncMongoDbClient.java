@@ -116,12 +116,13 @@ public class AsyncMongoDbClient extends DB {
   private int batchedWriteCount = 0;
  //Counter
   private int Counter = 0;
-
+  private int flags = 0;
+  private int flagc = 0;
   /** Sum variable*/
   protected static HashMap<String, ArrayList<Integer>> sum_var = new HashMap<String, ArrayList<Integer>>();
   private int countx = 0;
-  private int sumx = 0;
-  private long countxx;
+  //private int sumx = 0;
+  //private long countxx;
 
   //private static String tabledb = "usertable";
  
@@ -268,14 +269,14 @@ public class AsyncMongoDbClient extends DB {
 			}
 		agg.insert(writeConcern, key);
 	}
-	System.out.println("Count operation: ");
-	System.out.println(countx);
-	HashSet<String> hex =new HashSet<String>();
-	hex.add("field0");
-	sum(name, 0, hex, new Vector<HashMap<String, ByteIterator>>());
+	//System.out.println("Count operation: ");
+	//System.out.println(countx);
+	//HashSet<String> hex =new HashSet<String>();
+	//hex.add("field0");
+	//sum(name, 0, hex, new Vector<HashMap<String, ByteIterator>>());
 	//count(name);
-	System.out.println("Sum operation: ");
-	System.out.println(sumx);
+	//System.out.println("Sum operation: ");
+	//System.out.println(sumx);
 	//System.out.println("\n Sum: "+ Integer.toString(n)+ "\n");
         System.out.println("mongo connection created with " + url);
       } catch (final Exception e1) {
@@ -416,36 +417,36 @@ public class AsyncMongoDbClient extends DB {
   /* Sum Function*/
   public final Status sum( final String table, final int key, final HashSet<String> hex, final Vector<HashMap<String, ByteIterator>> result) {
 	int sum = 0;
+	final MongoCollection collection1 = database.getCollection(table);
 	String element = hex.toArray(new String[1])[0];
 	for (int x: sum_var.get(element))
 	{
 		sum = sum+x;
 	}
 	//return sum;
-	wait(10);
-	sumx = sum;
-	//System.out.println(sum);
+	wait(1);
+	//sumx = sum;
+	if(flags == 0)
+	{	
+		System.out.println("SUM: "+sum);
+		flags +=1;
+	}
 	
 	return Status.OK;
 }
 
-/*wait*/
 
-private void wait(int ms){
-	try{
-		Thread.sleep(ms);
-	}
-	catch(InterruptedException ex){
-		//Thread.currentThread().interrupt();
-		System.out.println("no sleep");
-	}
-}
 
 /*Count Function*/
 	public final Status count(final String table){
 	   final MongoCollection collection = database.getCollection(table);
-		countxx = collection.count();
-           //System.out.println("Number of rows in this table: "+collection.count());
+		//countxx = collection.count();
+		wait(1);
+	   if(flagc ==0)
+	   {
+           	System.out.println("Number of rows in this table: "+collection.count());
+		flagc+=1;
+           }
 	   return Status.OK;
 }
 /*Main sum Fuction*/
@@ -477,6 +478,18 @@ k+=(docAsMap.get(“field0”)).getLong();
 return k;
 }
 */
+
+/*wait*/
+
+private void wait(int ms){
+	try{
+		Thread.sleep(ms);
+	}
+	catch(InterruptedException ex){
+		//Thread.currentThread().interrupt();
+		System.out.println("no sleep");
+	}
+}
 
 
   /**
