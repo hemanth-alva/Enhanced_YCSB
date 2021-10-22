@@ -250,7 +250,8 @@ public class AsyncMongoDbClient extends DB {
         database = mongoClient.getDatabase(databaseName);
 	final String name = "Aggregate";
 	MongoCollection agg=database.getCollection(name);
-	for(int i=0; i<500; i++){
+	//int sss = 0;
+	for(int i=0; i<20000; i++){
 		final DocumentBuilder key= DOCUMENT_BUILDER.get().reset().add("_id",i);
 		final Document query = key.build();
 		for(int j=0;j<5;j++){
@@ -261,9 +262,11 @@ public class AsyncMongoDbClient extends DB {
 			int num = rand.nextInt();
 			key.add(help,num);
 			sum_var.computeIfAbsent(help, k -> new ArrayList<>()).add(num);
+			//sss = num+sss;
 			}
 		agg.insert(writeConcern, key);
 	}
+	//System.out.println(sss);
 	HashSet<String> hex =new HashSet<String>();
 	hex.add("field0");
 	sum(name, 0, hex, new Vector<HashMap<String, ByteIterator>>());
@@ -393,7 +396,7 @@ public class AsyncMongoDbClient extends DB {
 			if ((Counter%5==0)&&(Counter==100)){
 				System.out.println("Join\n");
 				System.out.println(mpa);
-				Sytem.out.println("\n");
+				System.out.println("\n");
 			}
 			Counter=Counter+1;
 			wait(10);
