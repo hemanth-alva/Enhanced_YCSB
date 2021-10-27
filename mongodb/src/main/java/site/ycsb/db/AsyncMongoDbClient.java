@@ -254,7 +254,7 @@ public class AsyncMongoDbClient extends DB {
         database = mongoClient.getDatabase(databaseName);
 	final String name = "Aggregate";
 	MongoCollection agg=database.getCollection(name);
-	for(int i=0; i<20000; i++){
+	for(int i=0; i<10000; i++){
 		final DocumentBuilder key= DOCUMENT_BUILDER.get().reset().add("_id",i);
 		final Document query = key.build();
 		countx +=1;
@@ -405,7 +405,7 @@ public class AsyncMongoDbClient extends DB {
 				System.out.println("\n");
 			}
 			Counter=Counter+1;
-			wait(10);
+			wait(1);
 			return Status.OK;
 		}catch (final Exception e) {
       		e.printStackTrace();
