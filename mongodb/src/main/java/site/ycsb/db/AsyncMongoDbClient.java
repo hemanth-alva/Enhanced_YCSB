@@ -405,7 +405,7 @@ public class AsyncMongoDbClient extends DB {
 				System.out.println("\n");
 			}
 			Counter=Counter+1;
-			wait(1);
+			wait(10);
 			return Status.OK;
 		}catch (final Exception e) {
       		e.printStackTrace();
