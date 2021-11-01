@@ -369,6 +369,13 @@ public class CoreWorkload extends Workload {
    */
   public static final String JOIN_PROPORTION_PROPERTY_DEFAULT = "0.0";
 
+  /**
+   *Column on which sum operation is done
+   */
+  public static final String SUM_COL_PROPERTY="sumcol";
+  public static final String SUM_COL_PROPERTY_DEFAULT="field0";
+  public static String sumcol;  
+
  public static final String SUM_PROPORTION_PROPERTY="sumproportion";
 public static final String SUM_PROPORTION_PROPERTY_DEFAULT="0.0";
 
@@ -976,7 +983,8 @@ public static final String COUNT_PROPORTION_PROPERTY_DEFAULT="0.0";
 	
 	public void doTransactionSum(DB db){
 		HashSet<String> hex =new HashSet<String>();
-		hex.add("field0");
+		//hex.add("field0");
+		hex.add(sumcol);
 		db.sum(aggre,0,hex, new Vector<HashMap<String, ByteIterator>>());
 		//System.out.println("Sum called");
 		 
@@ -1015,6 +1023,7 @@ public static final String COUNT_PROPORTION_PROPERTY_DEFAULT="0.0";
     final double joinproportion=Double.parseDouble(p.getProperty(JOIN_PROPORTION_PROPERTY,JOIN_PROPORTION_PROPERTY_DEFAULT));
     final double sumproportion=Double.parseDouble(p.getProperty(SUM_PROPORTION_PROPERTY,SUM_PROPORTION_PROPERTY_DEFAULT));
     final double countproportion=Double.parseDouble(p.getProperty(COUNT_PROPORTION_PROPERTY,COUNT_PROPORTION_PROPERTY_DEFAULT));
+    sumcol = p.getProperty(SUM_COL_PROPERTY,SUM_COL_PROPERTY_DEFAULT);
 
     final DiscreteGenerator operationchooser = new DiscreteGenerator();
     if (readproportion > 0) {
