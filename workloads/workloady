@@ -10,6 +10,7 @@ scanproportion=0
 insertproportion=0
 sumproportion=0.5
 countproportion=0.8
+sumcol=field1
 
 requestdistribution=zipfian
 fieldlengthdistribution=zipfian
